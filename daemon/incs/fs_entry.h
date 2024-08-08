@@ -35,6 +35,7 @@ typedef struct fs_entry_s {
 size_t	    fs_entry_children_get_count(fs_entry_t *entry);
 fs_entry_t *fs_entry_children_get_child(fs_entry_t *entry, size_t index);
 fs_entry_t *fs_entry_create(const char *path);
+void	    fs_entry_delete(fs_entry_t *entry);
 void fs_entry_print(fs_entry_t *root, const char *initial_path, int depth);
 
 #endif /* __FS_ENTRY_H__ */

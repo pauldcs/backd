@@ -50,7 +50,7 @@ static void service_deinit(void)
 	size_t i = 0;
 	while (i < fp_index) {
 		if (fp[i]) {
-			//file_deinit(fp[i]);
+			fs_entry_delete(fp[i]);
 		}
 		i++;
 	}

@@ -140,5 +140,7 @@ int main(int ac, char *av[])
 	__backd_args__ = *args;
 
 	backd_init();
+	free(args);
+
 	return (EXIT_SUCCESS);
 }

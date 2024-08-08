@@ -19,9 +19,38 @@ static bool stat_call(const char *path, struct stat *st)
 	return (true);
 }
 
+static void fs_entry_dealloc(void *buffer)
+{
+	fs_entry_t *entry = (fs_entry_t *)buffer;
+	free((void *)entry->name);
+
+	if (entry->children) {
+		size_t dirsize = fs_entry_children_get_count(entry);
+		size_t i       = 0;
+
+		while (i < dirsize) {
+			fs_entry_dealloc(
+				fs_entry_children_get_child(entry, i++));
+		}
+		if (dirsize) {
+			array_kill(entry->children);
+		}
+	}
+
+	(void)memset(entry, 0, sizeof(fs_entry_t));
+	free(buffer);
+}
+
+static bool fs_entry_children_init(fs_entry_t *entry)
+{
+	entry->children = array_create(sizeof(fs_entry_t *), 12, NULL);
+	return (!!entry->children);
+}
+
 static bool fs_entry_alloc(fs_entry_t **buffer)
 {
 	*buffer = malloc(sizeof(fs_entry_t));
+	(void)memset(*buffer, 0, sizeof(buffer));
 	return (!!*buffer);
 }
 
@@ -31,19 +60,9 @@ static bool fs_entry_set_info(fs_entry_t *entry, const char *path,
 	entry->etype = (S_IFDIR & st->st_mode) == S_IFDIR ? ENTRY_FOLDER_T :
 							    ENTRY_FILE_T;
 	entry->name  = strdup(basename((char *)path));
-	//entry->name = strdup(path);
+	entry->children = NULL;
+	
 	return (!!entry->name);
-}
-
-static bool fs_entry_children_init(fs_entry_t *entry)
-{
-	entry->children = array_create(sizeof(fs_entry_t *), 12, NULL);
-	return (!!entry->children);
-}
-
-static void fs_entry_children_deinit(fs_entry_t *entry)
-{
-	array_kill(entry->children);
 }
 
 size_t fs_entry_children_get_count(fs_entry_t *entry)
@@ -94,7 +113,7 @@ static bool handle_children(const char *path, fs_entry_t *buffer)
 	}
 
 	if (!directory_open(path, &dir)) {
-		fs_entry_children_deinit(buffer);
+		fs_entry_dealloc(buffer);
 		return (false);
 	}
 
@@ -128,6 +147,11 @@ fs_entry_t *fs_entry_create(const char *path)
 	}
 
 	return (entry);
+}
+
+void fs_entry_delete(fs_entry_t *entry)
+{
+	fs_entry_dealloc(entry);
 }
 
 void fs_entry_print(fs_entry_t *root, const char *initial_path, int depth)
