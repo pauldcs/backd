@@ -1,0 +1,10 @@
+*compile_commands.json
+xre
+*.o
+*.a
+*.objs
+xre.dSYM
+tools/tester/outfiles
+.vscode
+.cache
+*.DS_Store
