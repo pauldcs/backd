@@ -52,7 +52,7 @@ void logger(t_log_level level, const char *filename, const char *func,
 	if (level == info) {
 		(void)fputstr(2, "%s [%s]: ", ts, level_string);
 	} else {
-		(void)fputstr(2, "%s [%s] (%s: %s: %u): ", ts, level_string,
+		(void)fputstr(2, "%s [%s] (%s: %s: %d): ", ts, level_string,
 			      filename, func, lineno);
 	}
 
@@ -67,4 +67,15 @@ void logger(t_log_level level, const char *filename, const char *func,
 void xre_log_set_level(t_log_level level)
 {
 	log_level = level;
+}
+
+void backd_failure(const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	fprintf(stderr, "%s: ", __backd_state__.title);
+	vfprintf(stderr, format, args);
+	va_end(args);
+
+	fprintf(stderr, "\n");
 }

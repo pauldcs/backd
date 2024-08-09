@@ -16,13 +16,15 @@
 #define __assert__(expr)                                                \
 	do {                                                            \
 		if (!(expr))                                            \
-			(void)fprintf(stderr, "Assertion failed: (%s)", \
-				      #expr);                           \
+			(void)fprintf(stderr,                           \
+				      "Assertion failed: %s:%d (%s)\n", \
+				      __FILE__, __LINE__, #expr);       \
 	} while (0)
 
-#define __assert_not_reached__                                  \
-	do {                                                    \
-		(void)fprintf(stderr, "Should not be reached"); \
+#define __assert_not_reached__                                          \
+	do {                                                            \
+		(void)fprintf(stderr, "%s: %d Should not be reached\n", \
+			      __FILE__, __LINE__, );                    \
 	} while (0)
 
 #endif /* !DISABLE_ASSERT */
@@ -37,8 +39,9 @@
 #define __return_if_fail__(expr)                                        \
 	do {                                                            \
 		if (!(expr)) {                                          \
-			(void)fprintf(stderr, "Assertion failed: (%s)", \
-				      #expr);                           \
+			(void)fprintf(stderr,                           \
+				      "Assertion failed: %s:%d (%s)\n", \
+				      __FILE__, __LINE__, #expr);       \
 			return;                                         \
 		};                                                      \
 	} while (0)
@@ -46,8 +49,9 @@
 #define __return_val_if_fail__(expr, val)                               \
 	do {                                                            \
 		if (!(expr)) {                                          \
-			(void)fprintf(stderr, "Assertion failed: (%s)", \
-				      #expr);                           \
+			(void)fprintf(stderr,                           \
+				      "Assertion failed: %s:%d (%s)\n", \
+				      __FILE__, __LINE__, #expr);       \
 			return val;                                     \
 		};                                                      \
 	} while (0)

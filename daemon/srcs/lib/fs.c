@@ -187,29 +187,9 @@ bool fd_read(int fd, void *dest, size_t n)
 	return (true);
 }
 
-bool directory_open(const char *path, DIR **dir)
+bool fd_is_control_term(int fd)
 {
-	*dir = opendir(path);
-	if (!*dir) {
-		return (false);
-	}
-	return (true);
-}
-
-bool directory_next_entry(DIR *dir, struct dirent **entry)
-{
-try_again:
-	*entry = readdir(dir);
-	if (!*entry) {
-		return (false);
-	}
-
-	if (strcmp((*entry)->d_name, ".") == 0 ||
-	    strcmp((*entry)->d_name, "..") == 0) {
-		goto try_again;
-	}
-
-	return (!!*entry);
+	return (tcgetpgrp(fd) > 0);
 }
 
 // #ifdef __linux__

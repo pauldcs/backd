@@ -21,6 +21,7 @@ bool fd_is_readable(const int fd);
 bool fd_is_regular(const int fd);
 bool fd_is_valid(const int fd);
 bool fd_is_writable(const int fd);
+bool fd_is_control_term(int fd);
 
 bool file_open_read(const char *fn, int *fd);
 bool file_open_write(const char *fn, int *fd);

@@ -67,13 +67,12 @@ bool __init_service(void)
 
 	int log_fd = init_logfile();
 	if (log_fd == -1) {
-		__logger(error, "failed to create logfile: %s: %s",
-			 strerror(errno));
+		backd_failure("failed to create logfile: %s", strerror(errno));
 		return (false);
 	}
 
 	if (dup2(log_fd, STDERR_FILENO) == -1) {
-		__logger(error, "failed to dup2 log_fd: %s", strerror(errno));
+		backd_failure("dup2 error: %s", strerror(errno));
 		return (false);
 	}
 
@@ -83,21 +82,21 @@ bool __init_service(void)
 	(void)signal(SIGHUP, SIG_IGN);
 
 	if (setsid() == -1) {
-		__logger(error, "failed to setsid: %s", strerror(errno));
+		backd_failure("setsid error: %s", strerror(errno));
 		return (false);
 	}
 
 	(void)umask(0);
 
 	if (chdir("/") == -1) {
-		__logger(error, "failed to chdir: %s", strerror(errno));
+		backd_failure("chdir error: %s", strerror(errno));
 		return (false);
 	}
 
 	return (true);
 }
 
-void backd_init()
+void backd_init(void)
 {
 	// switch (fork()) {
 	// case -1:
@@ -105,6 +104,11 @@ void backd_init()
 
 	// case 0:
 	// 	if (__init_service()) {
+	// if (fd_is_control_term(__backd_state__.fd_out)) {
+	// 	backd_failure("cannot be started manually");
+	// 	exit(EXIT_FAILURE);
+	// }
+
 	service();
 	// 		}
 	// 		exit(EXIT_FAILURE);

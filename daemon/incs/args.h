@@ -8,9 +8,6 @@
 
 #define FILE_STACK_SIZE 16
 
-extern void  *__stack[FILE_STACK_SIZE];
-extern size_t __top;
-
 typedef struct {
 	bool		fail;
 	void	       *arg;

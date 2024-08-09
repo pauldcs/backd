@@ -30,6 +30,7 @@ typedef enum e_log_level {
 
 extern t_log_level __log_level__;
 
+void backd_failure(const char *format, ...);
 void logger(t_log_level level, const char *filename, const char *func,
 	    uint32_t lineno, const char *format, ...);
 

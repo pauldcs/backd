@@ -89,7 +89,7 @@ char cron_mdays_[31 + 1];  // 1 - 31
 char cron_months_[12 + 1]; // 1 - 12
 char cron_wdays_[8];	   // 0 - 7 (Sunday may be either 0 or 7)
 
-void print_cron_arrays()
+void print_cron_arrays(void)
 {
 	// Print cron_minutes_
 	printf("%20s", "cron_minutes_: ");

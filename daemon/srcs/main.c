@@ -3,18 +3,20 @@
 #include "logging.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 
 g_state_t __backd_state__ = {
 	.title	 = "backd",
 	.version = "0.0.1",
+	.fd_out	 = STDERR_FILENO,
 };
 
 /*
  *    mini stack to hold each input file sepraratly
  */
-void  *__stack[FILE_STACK_SIZE];
-size_t __top;
+static void  *__stack[FILE_STACK_SIZE];
+static size_t __top;
 
 void filename_stack_push(void *filename)
 {
@@ -50,7 +52,7 @@ void stack_reverse_in_place(void)
 }
 
 bool cron_check(char *ps);
-void print_cron_arrays();
+void print_cron_arrays(void);
 
 int main(int ac, char *av[])
 {
@@ -131,15 +133,14 @@ int main(int ac, char *av[])
 	stack_reverse_in_place();
 
 	if (args->n_seconds && args->cron_str) {
-		fprintf(stderr,
-			"%s: Invalid arguments: -s, -c are not compatible\n",
-			__backd_state__.title);
+		backd_failure("Invalid arguments: -s, -c are not compatible");
 		return (EXIT_FAILURE);
 	}
 
 	__backd_args__ = *args;
 
 	backd_init();
+
 	free(args);
 
 	return (EXIT_SUCCESS);
